@@ -1,0 +1,40 @@
+[project]
+name = "SnapStudySensei"
+version = "0.0.1"
+authors = [
+  { name="Clément Bœsch", email="u@pkh.me" },
+]
+description = "Capture, extract, translate and record Japanese flashcards into Anki"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: Japanese",
+]
+dependencies = [
+  'PySide6',
+  'pillow',
+  'xdg-base-dirs',
+  'manga-ocr',
+  'xcffib',
+  'gtts',
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ubitux/SnapStudySensei"
+"Bug Tracker" = "https://github.com/ubitux/SnapStudySensei/issues"
+
+[project.gui-scripts]
+sss = "snapstudysensei:run"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.pyright]
+venv = "venv"
+venvPath = "."

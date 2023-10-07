@@ -102,7 +102,11 @@ class SnapStudySensei:
         # Check if the previously selected window can still be found in the new windows set
         if wid is not None:
             ids = [window["wid"] for window in windows_list_model]
-            self._window.set_capture_window(ids.index(wid))
+            try:
+                self._window.set_capture_window(ids.index(wid))
+            except ValueError:
+                # This can happen when the window was closed but is still selected
+                pass
 
     @Slot(str, str, str)
     def _audio_source_changed(self, audio_source: str, word: str, reading: str):

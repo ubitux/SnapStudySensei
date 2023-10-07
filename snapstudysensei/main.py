@@ -1,5 +1,6 @@
 import sys
 import tempfile
+from operator import itemgetter
 from pathlib import Path
 
 from PIL import Image
@@ -173,6 +174,8 @@ class SnapStudySensei:
         self._wid = None
         windows = self._winlist()
         windows_list_model = [dict(title=title, wid=wid, visible=visible) for wid, (title, visible) in windows.items()]
+        windows_list_model = sorted(windows_list_model, key=lambda item: item["title"].lower())
+        windows_list_model = sorted(windows_list_model, key=itemgetter("visible"), reverse=True)
         self._engine.rootContext().setContextProperty("windowsListModel", windows_list_model)
         return windows_list_model
 

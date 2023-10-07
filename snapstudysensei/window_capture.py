@@ -43,6 +43,9 @@ class WindowCaptureProducer(QObject):
 
         window = QWindow.fromWinId(self._wid)
         pixmap = window.screen().grabWindow(window.winId())
+        if pixmap.isNull():
+            return
+
         pixmap = pixmap.scaled(240, 180, Qt.KeepAspectRatio)
         image = pixmap.toImage()
 

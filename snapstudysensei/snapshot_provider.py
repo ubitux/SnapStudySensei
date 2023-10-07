@@ -13,6 +13,8 @@ class SnapshotProvider(QQuickImageProvider):
         wid = int(id)
         window = QWindow.fromWinId(wid)
         pixmap = window.screen().grabWindow(window.winId())
+        if pixmap.isNull():
+            return pixmap
 
         self.snapshotTaken.emit(pixmap)
 

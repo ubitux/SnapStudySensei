@@ -36,7 +36,6 @@ class SnapStudySensei:
         self._engine.addImageProvider("snapshot", self._snapshot_provider)
 
         # Init capture windows list
-        self._wid = None
         self._winlist = WindowsList()
         self._update_windows_list_model()  # make sure the model is set before loading the QML
 
@@ -89,7 +88,6 @@ class SnapStudySensei:
 
     def _update_windows_list_model(self) -> list[dict[str, str | int]]:
         """Rebuild the list of windows entirely"""
-        self._wid = None
         windows = self._winlist()
         windows_list_model = [dict(title=title, wid=wid, visible=visible) for wid, (title, visible) in windows.items()]
         windows_list_model = sorted(windows_list_model, key=lambda item: item["title"].lower())

@@ -4,36 +4,17 @@ from operator import itemgetter
 from pathlib import Path
 
 from PIL import Image
-from PySide6.QtCore import QRect, QRectF, QSize, Qt, Signal, Slot
-from PySide6.QtGui import QGuiApplication, QPixmap, QWindow
+from PySide6.QtCore import QRect, QRectF, Slot
+from PySide6.QtGui import QGuiApplication, QPixmap
 from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtQuick import QQuickImageProvider
 
 import snapstudysensei.window_capture
 from snapstudysensei.anki import AnkiConnect, AnkiNote
 from snapstudysensei.dic import JDictionary
 from snapstudysensei.ocr import OCRWrapper
+from snapstudysensei.snapshot_provider import SnapshotProvider
 from snapstudysensei.tts import TTSWrapper
 from snapstudysensei.windows_list import WindowsList
-
-
-class SnapshotProvider(QQuickImageProvider):
-    snapshotTaken = Signal(QPixmap)
-
-    def __init__(self):
-        super().__init__(QQuickImageProvider.Pixmap)
-
-    def requestPixmap(self, id: str, size: QSize, requestedSize: QSize) -> QPixmap:
-        wid = int(id)
-        window = QWindow.fromWinId(wid)
-        pixmap = window.screen().grabWindow(window.winId())
-
-        self.snapshotTaken.emit(pixmap)
-
-        width = min(pixmap.width(), 640)
-        height = min(pixmap.height(), 480)
-        pixmap = pixmap.scaled(width, height, Qt.KeepAspectRatio)
-        return pixmap
 
 
 class SnapStudySensei:

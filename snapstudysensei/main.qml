@@ -87,6 +87,16 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             onActivated: windowCaptureProducer.wid = currentValue
                             Component.onCompleted: windowCaptureProducer.wid = currentValue
+                            delegate: ItemDelegate {
+                                width: windowsList.width
+                                contentItem: Text {
+                                    text: modelData[windowsList.textRole]
+                                    font.italic: !modelData["visible"]
+                                    font.bold: windowsList.currentIndex === index
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                highlighted: windowsList.highlightedIndex === index
+                            }
                         }
                         Button {
                             text: "↺"

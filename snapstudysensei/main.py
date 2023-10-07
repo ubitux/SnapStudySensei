@@ -172,7 +172,7 @@ class SnapStudySensei:
         """Rebuild the list of windows entirely"""
         self._wid = None
         windows = self._winlist()
-        windows_list_model = [dict(title=title, wid=wid) for wid, (title, _) in windows.items()]
+        windows_list_model = [dict(title=title, wid=wid, visible=visible) for wid, (title, visible) in windows.items()]
         self._engine.rootContext().setContextProperty("windowsListModel", windows_list_model)
         return windows_list_model
 

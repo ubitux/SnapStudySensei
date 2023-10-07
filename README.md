@@ -29,10 +29,12 @@ pip install -e .
 
 ### Important note
 
-This is a non-intrusive standalone installation, but system input methods (such
-as fcitx) are unlikely to work due to how PySide6 isolation works inside a
-virtual env. Installing it system wide is the only alternative I could find
-so far.
+This is a non-intrusive standalone installation, which means the Qt libraries
+are duplicated within the virtual env. This breaks at least the fcitx input
+method setup on the system. Installing `ibus` and specifying `QT_IM_MODULE=ibus`
+can be used as a [workaround].
+
+[workaround]: https://github.com/fcitx/fcitx5/discussions/873#discussioncomment-7212460
 
 
 ## Running

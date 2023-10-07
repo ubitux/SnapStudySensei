@@ -5,7 +5,7 @@ from pathlib import Path
 
 from PIL import Image
 from PySide6.QtCore import Property, QObject, QRect, QRectF, QSize, Qt, Signal, Slot
-from PySide6.QtGui import QGuiApplication, QPixmap
+from PySide6.QtGui import QGuiApplication, QPixmap, QWindow
 from PySide6.QtMultimedia import QVideoFrame, QVideoFrameFormat, QVideoSink
 from PySide6.QtQml import QmlElement, QQmlApplicationEngine
 from PySide6.QtQuick import QQuickImageProvider
@@ -28,9 +28,7 @@ class WindowCaptureProducer(QObject):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        app = QGuiApplication.instance()
         self._wid = None
-        self._screen = app.primaryScreen()
         self._video_sink = None
 
     def _get_wid(self) -> int | None:
@@ -56,7 +54,8 @@ class WindowCaptureProducer(QObject):
         if self._wid is None or self._video_sink is None:
             return
 
-        pixmap = self._screen.grabWindow(self._wid)
+        window = QWindow.fromWinId(self._wid)
+        pixmap = window.screen().grabWindow(window.winId())
         pixmap = pixmap.scaled(240, 180, Qt.KeepAspectRatio)
         image = pixmap.toImage()
 
@@ -83,13 +82,13 @@ class WindowCaptureProducer(QObject):
 class SnapshotProvider(QQuickImageProvider):
     snapshotTaken = Signal(QPixmap)
 
-    def __init__(self, app):
+    def __init__(self):
         super().__init__(QQuickImageProvider.Pixmap)
-        self._screen = app.primaryScreen()
 
     def requestPixmap(self, id: str, size: QSize, requestedSize: QSize) -> QPixmap:
         wid = int(id)
-        pixmap = self._screen.grabWindow(wid)
+        window = QWindow.fromWinId(wid)
+        pixmap = window.screen().grabWindow(window.winId())
 
         self.snapshotTaken.emit(pixmap)
 
@@ -110,7 +109,7 @@ class SnapStudySensei:
         self._anki = AnkiConnect()
         self._tempdir = Path(tempfile.gettempdir())
 
-        self._snapshot_provider = SnapshotProvider(app)
+        self._snapshot_provider = SnapshotProvider()
         self._snapshot_provider.snapshotTaken.connect(self._snapshot_taken)
         self._snapshot = None
 

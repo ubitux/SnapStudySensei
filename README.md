@@ -31,11 +31,10 @@ pip install -e .
 
 This is a non-intrusive standalone installation, which means the Qt libraries
 are duplicated within the virtual env. This breaks at least the fcitx input
-method setup on the system. Installing `ibus` and specifying `QT_IM_MODULE=ibus`
-can be used as a [workaround].
+method setup on the system. Setting `IBUS_USE_PORTAL=1 QT_IM_MODULE=ibus` in the
+environment can be used as a [workaround] (ibus doesn't need to be installed).
 
-[workaround]: https://github.com/fcitx/fcitx5/discussions/873#discussioncomment-7212460
-
+[workaround]: https://github.com/fcitx/fcitx5/discussions/873#discussioncomment-7223614
 
 ## Running
 

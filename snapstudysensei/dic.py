@@ -47,8 +47,8 @@ class JDictionary:
                 for ele in entry.findall(source + "_ele"):
                     eb = ele.find(source + "eb")  # element "body"?
                     assert eb is not None
-                    e_pri = ele.find(source + "e_pri")  # element priority
-                    priority = self._get_priority_score(e_pri.text if e_pri else None)
+                    e_pri = ele.findall(source + "e_pri")
+                    priority = self._get_priority_score(e_pri)
                     self._index[eb.text].append((priority, i))
 
     @staticmethod
@@ -60,10 +60,11 @@ class JDictionary:
         sys.stdout.flush()
 
     @staticmethod
-    def _get_priority_score(priority: str | None) -> int:
+    def _get_priority_score(element_priorities) -> int:
         # TODO build a better score using the other keys
-        if priority is not None and priority.startswith("nf"):
-            return int(priority[2:])
+        for priority in element_priorities:
+            if priority.text.startswith("nf"):
+                return int(priority.text[2:])
         return 100
 
     def __call__(self, word: str) -> list[dict[str, str]]:

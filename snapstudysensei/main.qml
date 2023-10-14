@@ -318,30 +318,42 @@ ApplicationWindow {
                     model: ListModel { id: recordModel }
                     clip: true
                     Component.onCompleted: positionViewAtEnd()
-                    delegate: ColumnLayout {
-                        visible: !record_filter.text || model.reading.includes(record_filter.text)
-                        height: visible ? implicitHeight : 0
-                        RowLayout {
-                            Button {
-                                property string __record_id: model.record_id
-                                text: "✗"
-                                background.implicitWidth: 0
-                                background.implicitHeight: 0
-                                onClicked: {
-                                    recordModel.remove(index, 1);
-                                    recordRemoved(__record_id);
+
+                    delegate: Loader {
+                        readonly property bool __visible: !record_filter.text || model.reading.includes(record_filter.text)
+                        sourceComponent: __visible ? visibleRecord : invisibleRecord
+
+                        Component {
+                            id: visibleRecord
+                            ColumnLayout {
+                                RowLayout {
+                                    Button {
+                                        property string __record_id: model.record_id
+                                        text: "✗"
+                                        background.implicitWidth: 0
+                                        background.implicitHeight: 0
+                                        onClicked: {
+                                            recordModel.remove(index, 1);
+                                            recordRemoved(__record_id);
+                                        }
+                                    }
+                                    Label {
+                                        Layout.fillWidth: true
+                                        font.pointSize: 18
+                                        text: model.reading
+                                    }
+                                }
+                                Label {
+                                    font.pointSize: 10
+                                    font.italic: true
+                                    text: model.meaning
                                 }
                             }
-                            Label {
-                                Layout.fillWidth: true
-                                font.pointSize: 18
-                                text: model.reading
-                            }
                         }
-                        Label {
-                            font.pointSize: 10
-                            font.italic: true
-                            text: model.meaning
+
+                        Component {
+                            id: invisibleRecord
+                            Item {}
                         }
                     }
                 }

@@ -26,6 +26,7 @@ ApplicationWindow {
         dictModel.clear();
         for (const entry of info)
             dictModel.append(entry);
+        dictView.positionViewAtBeginning();
     }
 
     function add_records(records) {
@@ -137,6 +138,7 @@ ApplicationWindow {
                         Layout.alignment: Qt.AlignHCenter
                     }
                     ListView {
+                        id: dictView
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         clip: true

@@ -137,32 +137,35 @@ ApplicationWindow {
                         text: root.selected_word
                         Layout.alignment: Qt.AlignHCenter
                     }
-                    ListView {
-                        id: dictView
+                    ScrollView {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        clip: true
-                        model: ListModel { id: dictModel }
-                        delegate: ColumnLayout {
-                            RowLayout {
-                                Button {
-                                    text: "✓"
-                                    background.implicitWidth: 0
-                                    background.implicitHeight: 0
-                                    onClicked: {
-                                        readingText.text = model.reading != root.selected_word ? model.reading : "";
-                                        meaningText.text = model.senses;
+
+                        ListView {
+                            id: dictView
+                            clip: true
+                            model: ListModel { id: dictModel }
+                            delegate: ColumnLayout {
+                                RowLayout {
+                                    Button {
+                                        text: "✓"
+                                        background.implicitWidth: 0
+                                        background.implicitHeight: 0
+                                        onClicked: {
+                                            readingText.text = model.reading != root.selected_word ? model.reading : "";
+                                            meaningText.text = model.senses;
+                                        }
+                                    }
+                                    Label {
+                                        Layout.fillWidth: true
+                                        font.pointSize: 18
+                                        text: model.rich_title
                                     }
                                 }
                                 Label {
-                                    Layout.fillWidth: true
-                                    font.pointSize: 18
-                                    text: model.rich_title
+                                    font.pointSize: 10
+                                    text: model.rich_senses
                                 }
-                            }
-                            Label {
-                                font.pointSize: 10
-                                text: model.rich_senses
                             }
                         }
                     }

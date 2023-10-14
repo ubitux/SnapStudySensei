@@ -331,7 +331,7 @@ ApplicationWindow {
                         Component.onCompleted: positionViewAtEnd()
 
                         delegate: Loader {
-                            readonly property bool __visible: !record_filter.text || model.reading.includes(record_filter.text)
+                            readonly property bool __visible: !record_filter.text || model.reading.includes(record_filter.text) || model.meaning.includes(record_filter.text)
                             sourceComponent: __visible ? visibleRecord : invisibleRecord
 
                             Component {

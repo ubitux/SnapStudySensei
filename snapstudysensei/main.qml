@@ -308,8 +308,12 @@ ApplicationWindow {
                 anchors.fill: parent
 
                 RowLayout {
-                    Label { text: "Filter:" }
-                    TextField { id: record_filter; Layout.fillWidth: true }
+                    Label { text: "Filter: " }
+                    TextField {
+                        id: record_filter
+                        Layout.fillWidth: true
+                        onTextEdited: recordView.positionViewAtBeginning()
+                    }
                 }
                 ListView {
                     id: recordView

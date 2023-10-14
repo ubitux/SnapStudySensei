@@ -1,3 +1,4 @@
+import colorsys
 import gzip
 import sys
 import tempfile
@@ -26,6 +27,8 @@ class JDictionary:
     URL = f"http://ftp.edrdg.org/pub/Nihongo/{DB_NAME}.gz"
 
     def __init__(self):
+        self._markers = self._get_frequency_markers()
+
         # Download database if needed
         db_path = xdg_data_home() / "SnapStudySensei" / (self.DB_NAME + ".xml")
         db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -67,6 +70,36 @@ class JDictionary:
                 return int(priority.text[2:])
         return 100
 
+    @staticmethod
+    def _mix(a, b, x):
+        return a * (1 - x) + b * x
+
+    @staticmethod
+    def _linear(a, b, x):
+        return (x - a) / (b - a)
+
+    @classmethod
+    def _remap(cls, a, b, c, d, x):
+        return cls._mix(c, d, cls._linear(a, b, x))
+
+    @classmethod
+    def _get_frequency_markers(cls) -> list[str]:
+        numbers = "❶ ❷ ❸ ❹ ❺ ❻ ❼ ❽ ❾ ❿"
+        markers = []
+        for i, number in enumerate(numbers):
+            hue = cls._remap(0, len(numbers) - 1, 0.4, 1.0, i)
+            color = colorsys.hls_to_rgb(hue, 0.4, 1.0)
+            color = tuple(round(c * 255) & 0xFF for c in color)
+            color = "#" + "".join(f"{c:02x}" for c in color)
+            markers.append(f'<font color="{color}">{number}</font> ')
+        return markers
+
+    def _get_frequency_marker(self, priority: int) -> str:
+        if priority == 100:
+            return ""
+        marker_id = int(self._remap(1, 99, 0, len(self._markers) - 1, priority))
+        return self._markers[marker_id]
+
     def __call__(self, word: str) -> list[dict[str, str]]:
         entries = []
 
@@ -87,7 +120,7 @@ class JDictionary:
                 entries += sorted(self._index.get(key, []))
 
         ret = []
-        for _, entry_id in entries:
+        for priority, entry_id in entries:
             xml_entry = self._xml_root[entry_id]
 
             keys = []
@@ -102,7 +135,7 @@ class JDictionary:
                     if not reading and source == "r":
                         reading = eb.text
 
-            rich_title = ", ".join(keys)
+            rich_title = self._get_frequency_marker(priority) + ", ".join(keys)
             assert reading is not None
 
             senses_list = []

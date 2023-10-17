@@ -82,6 +82,10 @@ class JDictionary:
     def _remap(cls, a, b, c, d, x):
         return cls._mix(c, d, cls._linear(a, b, x))
 
+    @staticmethod
+    def _clamp(x, a, b):
+        return min(b, max(a, x))
+
     @classmethod
     def _get_frequency_markers(cls) -> list[str]:
         numbers = "❶ ❷ ❸ ❹ ❺ ❻ ❼ ❽ ❾ ❿"
@@ -97,7 +101,10 @@ class JDictionary:
     def _get_frequency_marker(self, priority: int) -> str:
         if priority == 100:
             return ""
-        marker_id = int(self._remap(1, 99, 0, len(self._markers) - 1, priority))
+        # grep -o 'nf[0-9][0-9]' JMdict_e_examp.xml|sort|uniq -c
+        # shows that nfXX doesn't go above nf48 (which we round to 50)
+        marker_id = int(self._remap(1, 50, 0, len(self._markers) - 1, priority))
+        marker_id = self._clamp(marker_id, 0, len(self._markers) - 1)
         return self._markers[marker_id]
 
     def __call__(self, word: str) -> list[dict[str, str]]:

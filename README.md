@@ -10,8 +10,8 @@ This project is inspired by [Game2Text] but takes a different technical approach
 
 ## Known limitations
 
-- Currently **only supported on Linux**. Porting it to macOS and Windows should
-  be doable by adding the ability to list windows (see `windows_list.py`, patch
+- Currently **only supported on Linux and Windows**. Porting it to macOS should
+  be doable by adding the ability to list windows (see `windows_list/windows_list_osx.py`, patch
   welcome)
 - **No configuration**, only designed for my own needs so far
 - A bit **slow to start** due to the OCR model initialization

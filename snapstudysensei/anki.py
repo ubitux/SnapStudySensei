@@ -43,9 +43,13 @@ class AnkiConnect:
         model_id = model_ids.get(self.MODEL_NAME)
         if model_id is None:
             tpl_dir = Path(__file__).resolve().parent / "data"
-            front = open(tpl_dir / "front.html").read()
-            back = open(tpl_dir / "back.html").read()
             css = open(tpl_dir / "style.css").read()
+
+            card_templates = []
+            for card_type in ("howtoread", "meaning", "howtosay"):
+                front = open(tpl_dir / f"{card_type}_front.html").read()
+                back = open(tpl_dir / f"{card_type}_back.html").read()
+                card_templates.append(dict(Name=card_type, Front=front, back=back))
 
             model_id = self.query(
                 "createModel",
@@ -60,7 +64,7 @@ class AnkiConnect:
                     "ExtraInfo",
                 ],
                 css=css,
-                cardTemplates=[dict(Front=front, Back=back)],
+                cardTemplates=card_templates,
             )
 
         self.media_dir_path = Path(self.query("getMediaDirPath"))

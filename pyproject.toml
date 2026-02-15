@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "SnapStudySensei"
 version = "0.0.1"
@@ -6,7 +10,7 @@ authors = [
 ]
 description = "Capture, extract, translate and record Japanese flashcards into Anki"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -38,3 +42,9 @@ line_length = 120
 [tool.pyright]
 venv = "venv"
 venvPath = "."
+
+[tool.setuptools]
+packages = ["snapstudysensei"]
+
+[tool.setuptools.package-data]
+snapstudysensei = ["data/*", "*.qml"]

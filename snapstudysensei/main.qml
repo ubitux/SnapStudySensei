@@ -236,6 +236,7 @@ ApplicationWindow {
                 Switch {
                     text: "Include screenshot"
                     checked: true
+                    visible: ankiEnabled
                     onToggled: includeScreenshotToggled(checked)
                 }
                 GridLayout {
@@ -297,6 +298,7 @@ ApplicationWindow {
                 Button {
                     text: "Record"
                     font.bold: true
+                    visible: ankiEnabled
                     enabled: wordText.text != "" && meaningText.text != ""
                     Layout.alignment: Qt.AlignHCenter
                     onClicked: requestRecordAdd(sentenceText.text, wordText.text, readingText.text, meaningText.text)
@@ -306,6 +308,7 @@ ApplicationWindow {
 
         /* Records */
         Frame {
+            visible: ankiEnabled
             SplitView.preferredWidth: root.width / 4
             Layout.fillHeight: true
             Layout.fillWidth: true

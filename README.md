@@ -1,7 +1,8 @@
 # SnapStudySensei
 
-**SnapStudySensei** is a tool to assist with capturing, extracting, translating
-and recording Japanese flashcards into [Anki].
+**SnapStudySensei** is a tool to assist with capturing and extracting Japanese
+text, looking it up in a dictionary, and optionally recording flashcards into
+[Anki].
 
 This project is inspired by [Game2Text] but takes a different technical approach.
 
@@ -19,7 +20,9 @@ This project is inspired by [Game2Text] but takes a different technical approach
 
 ## Installation
 
-[Anki] and its [Anki-Connect] plugin must be installed.
+Install [Anki] and its [Anki-Connect] plugin if you want to record flashcards.
+They are not required for the capture, OCR, dictionary, and text-to-speech
+features.
 
 ```sh
 python -m venv venv
@@ -38,7 +41,9 @@ environment can be used as a [workaround] (ibus doesn't need to be installed).
 
 ## Running
 
-[Anki] and its [Anki-Connect] plugin must be running.
+To use the flashcard features, start [Anki] with its [Anki-Connect] plugin before
+starting SnapStudySensei. If Anki-Connect is unavailable, SnapStudySensei starts
+without the Records panel and card-recording controls.
 
 Enter the venv (`. venv/bin/activate`) if you used that installation method, and
 run `sss`.

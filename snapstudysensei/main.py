@@ -25,7 +25,7 @@ class SnapStudySensei:
 
         self._include_screenshot = True
         self._audio = None
-        self._anki = AnkiConnect()
+        self._anki, anki_records = self._initialize_anki()
         self._tempdir = Path(tempfile.gettempdir())
 
         self._snapshot_provider = SnapshotProvider()
@@ -34,6 +34,7 @@ class SnapStudySensei:
 
         self._engine = QQmlApplicationEngine()
         self._engine.addImageProvider("snapshot", self._snapshot_provider)
+        self._engine.rootContext().setContextProperty("ankiEnabled", self._anki is not None)
 
         # Init capture windows list
         self._winlist = WindowsList()
@@ -47,10 +48,8 @@ class SnapStudySensei:
             sys.exit(-1)
         self._window = root_objects[0]
 
-        # Fill all records grabbed from Anki
-        notes = self._anki.list_notes()
-        records = [note.get_qml_record() for note in notes]
-        self._window.add_records(records)
+        if anki_records:
+            self._window.add_records(anki_records)
 
         # Connect signals from the QML
         self._window.requestWindowsListRefresh.connect(self._windows_list_refresh)
@@ -61,8 +60,21 @@ class SnapStudySensei:
         self._window.includeScreenshotToggled.connect(self._include_screenshot_toggled)
         self._window.audioSourceChanged.connect(self._audio_source_changed)
 
+    @staticmethod
+    def _initialize_anki() -> tuple[AnkiConnect | None, list[dict]]:
+        try:
+            anki = AnkiConnect()
+            records = [note.get_qml_record() for note in anki.list_notes()]
+            return anki, records
+        except Exception as exc:
+            print(f"Anki integration disabled: {exc}", file=sys.stderr)
+            return None, []
+
     @Slot(str, str, str, str)
     def _record_add(self, sentence: str, word: str, reading: str, meaning: str):
+        if self._anki is None:
+            return
+
         if self._snapshot is not None and self._include_screenshot:
             picture = Image.fromqpixmap(self._snapshot) if self._snapshot else None
             picture_path = self._tempdir / "SnapStudySensei.png"
@@ -83,6 +95,9 @@ class SnapStudySensei:
 
     @Slot(str)
     def _record_remove(self, record_id: str):
+        if self._anki is None:
+            return
+
         anki_id = int(record_id)
         self._anki.remove_note(anki_id)
 

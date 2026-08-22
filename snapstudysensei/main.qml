@@ -14,7 +14,7 @@ ApplicationWindow {
 
     signal requestWindowsListRefresh(int current_wid)
     signal selectionMade(rect rect)
-    signal wordSelected(string word)
+    signal wordSelected(string word, color emphasis_color, color dim_color)
     signal requestRecordAdd(string sentence, string word, string reading, string meaning)
     signal recordRemoved(string record_id)
     signal includeScreenshotToggled(bool value)
@@ -249,10 +249,9 @@ ApplicationWindow {
                             readingText.text = "";
                             meaningText.text = "";
                             reset_audio_source();
-                            wordSelected(selectedText);
+                            wordSelected(selectedText, root.palette.text, root.palette.placeholderText);
                         }
                     }
-                    background: Rectangle { radius: 2; color: "white"; border.color: "#aaa" }
                 }
                 Switch {
                     text: "Include screenshot"
@@ -283,7 +282,6 @@ ApplicationWindow {
                     TextArea {
                         id: meaningText
                         Layout.fillWidth: true
-                        background: Rectangle { radius: 2; color: "white"; border.color: "#aaa" }
                     }
 
                     Label { text: "Audio" }

@@ -5,7 +5,7 @@ from pathlib import Path
 
 from PIL import Image
 from PySide6.QtCore import QRect, QRectF, Slot
-from PySide6.QtGui import QGuiApplication, QPixmap
+from PySide6.QtGui import QColor, QGuiApplication, QPixmap
 from PySide6.QtQml import QQmlApplicationEngine
 
 import snapstudysensei.window_capture
@@ -162,9 +162,13 @@ class SnapStudySensei:
         text = self._ocr(image)
         self._window.set_sentence(text.strip())
 
-    @Slot(str)
-    def _word_selected(self, word: str):
-        info = self._dic(word)
+    @Slot(str, QColor, QColor)
+    def _word_selected(self, word: str, emphasis_color: QColor, dim_color: QColor):
+        info = self._dic(
+            word,
+            emphasis_color.name(QColor.HexArgb),
+            dim_color.name(QColor.HexArgb),
+        )
         self._window.set_word_info(info)
 
 

@@ -107,7 +107,7 @@ class JDictionary:
         marker_id = self._clamp(marker_id, 0, len(self._markers) - 1)
         return self._markers[marker_id]
 
-    def __call__(self, word: str) -> list[dict[str, str]]:
+    def __call__(self, word: str, emphasis_color: str, dim_color: str) -> list[dict[str, str]]:
         entries = []
 
         # All potential keys
@@ -131,7 +131,7 @@ class JDictionary:
             xml_entry = self._xml_root[entry_id]
 
             keys = []
-            colors = dict(k="darkslategray", r="dimgray")
+            colors = dict(k=emphasis_color, r=dim_color)
             reading = ""
             for source in "kr":  # kanji, then reading
                 color = colors[source]
@@ -148,7 +148,9 @@ class JDictionary:
             senses_list = []
             rich_content = "<ol>"
             for i, sense in enumerate(xml_entry.findall("sense")):
-                tags = "".join(f'<li><font color="gray">{pos.text}</font></li>' for pos in sense.findall("pos"))
+                tags = "".join(
+                    f'<li><font color="{dim_color}">{pos.text}</font></li>' for pos in sense.findall("pos")
+                )
                 if tags:
                     tags = f"<ul>{tags}</ul>"
                 glosses = ", ".join(gloss.text for gloss in sense.findall("gloss"))

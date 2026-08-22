@@ -1,15 +1,15 @@
 import tempfile
-import urllib
 from pathlib import Path
-from urllib.parse import quote
-from urllib.request import urlretrieve
-
-from gtts import gTTS
+from typing import Any
 
 
 class TTSWrapper:
+    SAMPLE_RATE = 24_000
+    VOICE = "jf_alpha"
+
     def __init__(self):
-        self._tempfile = Path(tempfile.gettempdir()) / "SnapStudySensei.mp3"
+        self._tempfile = Path(tempfile.gettempdir()) / "SnapStudySensei.opus"
+        self._pipeline: Any | None = None
 
         # Cache only the last entry
         self._last_key: tuple[str, str, str] | None = None
@@ -20,9 +20,8 @@ class TTSWrapper:
 
     def set_method(self, method: str):
         self._func = {
-            "google-kanji": self._google_kanji,
-            "google-reading": self._google_reading,
-            "pod101": self._pod101,
+            "kokoro-word": self._kokoro_word,
+            "kokoro-reading": self._kokoro_reading,
             "none": self._none,
         }[method]
         self._method = method
@@ -30,22 +29,29 @@ class TTSWrapper:
     def _none(self, word: str, reading: str) -> Path | None:
         return None
 
-    def _google_kanji(self, word: str, reading: str) -> Path | None:
-        tts = gTTS(word, lang="ja")
-        tts.save(self._tempfile)
+    def _get_pipeline(self):
+        if self._pipeline is None:
+            from kokoro import KPipeline
+
+            self._pipeline = KPipeline(lang_code="j", repo_id="hexgrad/Kokoro-82M")
+        return self._pipeline
+
+    def _synthesize(self, text: str) -> Path:
+        import soundfile as sf
+
+        generator = self._get_pipeline()(text, voice=self.VOICE)
+        result = next(generator, None)
+        if result is None or result[2] is None:
+            raise RuntimeError("Kokoro did not generate any audio")
+
+        sf.write(self._tempfile, result[2], self.SAMPLE_RATE, format="OGG", subtype="OPUS")
         return self._tempfile
 
-    def _google_reading(self, word: str, reading: str) -> Path | None:
-        tts = gTTS(reading, lang="ja")
-        tts.save(self._tempfile)
-        return self._tempfile
+    def _kokoro_word(self, word: str, reading: str) -> Path:
+        return self._synthesize(word)
 
-    def _pod101(self, word: str, reading: str) -> Path | None:
-        word = quote(word)
-        reading = quote(reading)
-        url = f"https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji={word}&kana={reading}"
-        urlretrieve(url, self._tempfile)
-        return self._tempfile
+    def _kokoro_reading(self, word: str, reading: str) -> Path:
+        return self._synthesize(reading)
 
     def __call__(self, word: str, reading: str) -> Path | None:
         if not reading:

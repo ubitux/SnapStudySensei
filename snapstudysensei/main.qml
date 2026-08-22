@@ -281,16 +281,12 @@ ApplicationWindow {
                             onClicked: audioSourceChanged("none", "", "")
                         }
                         RadioButton {
-                            text: "🔊 Google (Kanji)"
-                            onClicked: audioSourceChanged("google-kanji", wordText.text, readingText.text)
+                            text: "🔊 Word"
+                            onClicked: audioSourceChanged("kokoro-word", wordText.text, readingText.text)
                         }
                         RadioButton {
-                            text: "🔊 Google (reading)"
-                            onClicked: audioSourceChanged("google-reading", wordText.text, readingText.text)
-                        }
-                        RadioButton {
-                            text: "🔊 Pod101"
-                            onClicked: audioSourceChanged("pod101", wordText.text, readingText.text)
+                            text: "🔊 Reading"
+                            onClicked: audioSourceChanged("kokoro-reading", wordText.text, readingText.text)
                         }
                     }
                 }

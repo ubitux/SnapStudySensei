@@ -128,8 +128,8 @@ class SnapStudySensei:
         self._tts.set_method(audio_source)
         try:
             source = self._tts(word, reading)
-        except Exception:
-            print("unable to grab audio", file=sys.stderr)
+        except Exception as exc:
+            print(f"unable to generate audio: {exc}", file=sys.stderr)
             source = None
         self._audio = source
         self._window.stop_audio()

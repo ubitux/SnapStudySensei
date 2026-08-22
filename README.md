@@ -59,6 +59,7 @@ category.
 
 - [Manga OCR](https://github.com/kha-white/manga-ocr/)
 - [JMdict](https://www.edrdg.org/wiki/index.php/JMdict-EDICT_Dictionary_Project)
+- [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M)
 
 
 [Anki]: https://apps.ankiweb.net

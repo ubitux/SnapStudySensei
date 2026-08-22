@@ -239,6 +239,7 @@ ApplicationWindow {
                 TextArea {
                     id: sentenceText
                     font.pointSize: 20
+                    wrapMode: TextEdit.Wrap
                     persistentSelection: true
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -281,6 +282,7 @@ ApplicationWindow {
                     TextArea {
                         id: meaningText
                         Layout.fillWidth: true
+                        wrapMode: TextEdit.Wrap
                     }
 
                     Label { text: "Audio" }

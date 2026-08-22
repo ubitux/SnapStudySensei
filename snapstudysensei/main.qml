@@ -79,7 +79,6 @@ ApplicationWindow {
                     anchors.fill: parent
 
                     RowLayout {
-                        Label { text: "Window:" }
                         ComboBox {
                             id: windowsList
                             model: windowsListModel

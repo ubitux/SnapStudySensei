@@ -1,11 +1,9 @@
 import colorsys
 import gzip
 import sys
-import tempfile
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 from dataclasses import asdict, dataclass
-from pathlib import Path
 from urllib.request import urlretrieve
 
 from xdg_base_dirs import xdg_data_home
@@ -33,7 +31,7 @@ class JDictionary:
         db_path = xdg_data_home() / "SnapStudySensei" / (self.DB_NAME + ".xml")
         db_path.parent.mkdir(parents=True, exist_ok=True)
         if not db_path.exists():
-            filename, headers = urlretrieve(self.URL, reporthook=self._report_progress)
+            filename, _ = urlretrieve(self.URL, reporthook=self._report_progress)
             with open(db_path, "wb") as dst, gzip.open(filename, "rb") as src:
                 dst.write(src.read())
         print(f"{self.DB_NAME}: downloaded")
@@ -111,7 +109,7 @@ class JDictionary:
         entries = []
 
         # All potential keys
-        keys = [k for k in self._index.keys() if word in k]
+        keys = [k for k in self._index if word in k]
 
         # Exact match
         entries += sorted(self._index.get(word, []))
@@ -147,10 +145,8 @@ class JDictionary:
 
             senses_list = []
             rich_content = "<ol>"
-            for i, sense in enumerate(xml_entry.findall("sense")):
-                tags = "".join(
-                    f'<li><font color="{dim_color}">{pos.text}</font></li>' for pos in sense.findall("pos")
-                )
+            for sense in xml_entry.findall("sense"):
+                tags = "".join(f'<li><font color="{dim_color}">{pos.text}</font></li>' for pos in sense.findall("pos"))
                 if tags:
                     tags = f"<ul>{tags}</ul>"
                 glosses = ", ".join(gloss.text for gloss in sense.findall("gloss"))

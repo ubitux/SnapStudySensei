@@ -204,15 +204,36 @@ ApplicationWindow {
                             )
                         )
                     }
-                    Rectangle {
-                        color: "transparent"
-                        border.color: "#58ff51" // TODO: add control?
-                        border.width: 2
+                    Item {
+                        anchors.fill: parent
                         visible: captureMouseArea.rect.width > 0 && captureMouseArea.rect.height > 0
-                        x: captureMouseArea.rect.x
-                        y: captureMouseArea.rect.y
-                        width:  captureMouseArea.rect.width
-                        height: captureMouseArea.rect.height
+
+                        readonly property color shadeColor: "#99000000"
+
+                        Rectangle {
+                            color: parent.shadeColor
+                            width: parent.width
+                            height: captureMouseArea.rect.y
+                        }
+                        Rectangle {
+                            color: parent.shadeColor
+                            y: captureMouseArea.rect.y + captureMouseArea.rect.height
+                            width: parent.width
+                            height: parent.height - y
+                        }
+                        Rectangle {
+                            color: parent.shadeColor
+                            y: captureMouseArea.rect.y
+                            width: captureMouseArea.rect.x
+                            height: captureMouseArea.rect.height
+                        }
+                        Rectangle {
+                            color: parent.shadeColor
+                            x: captureMouseArea.rect.x + captureMouseArea.rect.width
+                            y: captureMouseArea.rect.y
+                            width: parent.width - x
+                            height: captureMouseArea.rect.height
+                        }
                     }
                 }
                 Label { text: "Sentence" }

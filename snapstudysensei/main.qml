@@ -15,6 +15,7 @@ ApplicationWindow {
     signal requestWindowsListRefresh(int current_wid)
     signal selectionMade(rect rect)
     signal wordSelected(string word, color emphasis_color, color dim_color)
+    signal wordAtPositionRequested(string sentence, int position)
     signal requestRecordAdd(string sentence, string word, string reading, string meaning)
     signal recordRemoved(string record_id)
     signal includeScreenshotToggled(bool value)
@@ -22,6 +23,13 @@ ApplicationWindow {
 
     function set_capture_window(index) { windowsList.currentIndex = index; }
     function set_sentence(text) { sentenceText.text = text; }
+    function select_sentence_word(start, end) {
+        // Wait for TextArea to finish handling the click before selecting.
+        Qt.callLater(function() {
+            sentenceText.select(start, end);
+            set_selected_word(sentenceText.selectedText);
+        });
+    }
 
     function set_selected_word(word) {
         if (word == "" || word == root.selected_word)
@@ -249,12 +257,37 @@ ApplicationWindow {
                 Label { text: "Sentence" }
                 TextArea {
                     id: sentenceText
+                    property int selectionStartOnPress
+                    property int selectionEndOnPress
                     font.pointSize: 20
                     wrapMode: TextEdit.Wrap
                     persistentSelection: true
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    onReleased: set_selected_word(selectedText)
+                    onPressed: {
+                        selectionStartOnPress = selectionStart;
+                        selectionEndOnPress = selectionEnd;
+                    }
+                    onReleased: function(event) {
+                        let selectionChanged = selectionStart != selectionStartOnPress
+                            || selectionEnd != selectionEndOnPress;
+                        if (selectedText != "" && selectionChanged) {
+                            set_selected_word(selectedText);
+                            return;
+                        }
+
+                        // Nearest caret position (inter-character index)
+                        let pos = positionAt(event.x, event.y);
+                        // Caret's geometry relative to the text area
+                        let caret = positionToRectangle(pos);
+                        // If the caret ends up being located after the
+                        // character (typically if we click on the right half
+                        // of the character), we shift back the position to make
+                        // sure we include said character.
+                        if (pos > 0 && caret.x > event.x)
+                            pos--;
+                        wordAtPositionRequested(text, pos);
+                    }
                 }
                 Switch {
                     text: "Include screenshot"

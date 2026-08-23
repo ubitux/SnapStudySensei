@@ -12,6 +12,7 @@ import snapstudysensei.window_capture
 from snapstudysensei.anki import AnkiConnect, AnkiNote
 from snapstudysensei.dic import JDictionary
 from snapstudysensei.ocr import OCRWrapper
+from snapstudysensei.segmenter import Segmenter
 from snapstudysensei.snapshot_provider import SnapshotProvider
 from snapstudysensei.tts import TTSWrapper
 from snapstudysensei.windows_list import WindowsList
@@ -22,6 +23,7 @@ class SnapStudySensei:
         self._ocr = ocr
         self._dic = dic
         self._tts = tts
+        self._segmenter = Segmenter()
 
         self._include_screenshot = True
         self._audio = None
@@ -55,6 +57,7 @@ class SnapStudySensei:
         self._window.requestWindowsListRefresh.connect(self._windows_list_refresh)
         self._window.selectionMade.connect(self._selection_made)
         self._window.wordSelected.connect(self._word_selected)
+        self._window.wordAtPositionRequested.connect(self._word_at_position_requested)
         self._window.requestRecordAdd.connect(self._record_add)
         self._window.recordRemoved.connect(self._record_remove)
         self._window.includeScreenshotToggled.connect(self._include_screenshot_toggled)
@@ -170,6 +173,12 @@ class SnapStudySensei:
             dim_color.name(QColor.HexArgb),
         )
         self._window.set_word_info(info)
+
+    @Slot(str, int)
+    def _word_at_position_requested(self, sentence: str, position: int):
+        span = self._segmenter.word_span_at(sentence, position)
+        if span is not None:
+            self._window.select_sentence_word(*span)
 
 
 def run(ocr: OCRWrapper, dic: JDictionary, tts: TTSWrapper):

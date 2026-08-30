@@ -22,6 +22,17 @@ ApplicationWindow {
 
     function set_capture_window(index) { windowsList.currentIndex = index; }
     function set_sentence(text) { sentenceText.text = text; }
+
+    function set_selected_word(word) {
+        if (word == "" || word == root.selected_word)
+            return;
+        root.selected_word = word;
+        readingText.text = "";
+        meaningText.text = "";
+        reset_audio_source();
+        wordSelected(word, root.palette.text, root.palette.placeholderText);
+    }
+
     function set_word_info(info) {
         dictModel.clear();
         for (const entry of info)
@@ -243,15 +254,7 @@ ApplicationWindow {
                     persistentSelection: true
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    onReleased: {
-                        if (selectedText != "" && selectedText != root.selected_word) {
-                            root.selected_word = selectedText;
-                            readingText.text = "";
-                            meaningText.text = "";
-                            reset_audio_source();
-                            wordSelected(selectedText, root.palette.text, root.palette.placeholderText);
-                        }
-                    }
+                    onReleased: set_selected_word(selectedText)
                 }
                 Switch {
                     text: "Include screenshot"

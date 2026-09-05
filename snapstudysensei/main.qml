@@ -132,6 +132,7 @@ ApplicationWindow {
                     Button {
                         text: "Capture →"
                         onClicked: {
+                            captureMouseArea.p0 = captureMouseArea.p1 = Qt.point(0, 0);
                             captureImage.source = ""; // for a refresh in case the window ID didn't change
                             captureImage.source = "image://snapshot/" + windowCaptureProducer.wid;
                         }
